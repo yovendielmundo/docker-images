@@ -55,6 +55,9 @@ RUN go get github.com/gorilla/mux \
     && go get github.com/stretchr/testify/assert \
     && go get github.com/dghubble/sling \
     && go get github.com/google/go-querystring/query \
-    && go get gopkg.in/mgo.v2 \
+    && go get gopkg.in/mgo.v2 \	
+    && go get github.com/tylerb/graceful \
+    && go get github.com/Sirupsen/logrus \
+    && go get github.com/carbocation/interpose 
 
 
