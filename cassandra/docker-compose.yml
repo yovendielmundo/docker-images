@@ -1,0 +1,11 @@
+db:
+  image: cassandra:3.7
+  container_name: 'cassandra'
+  ports:
+    - 9160:9160
+    - 9042:9042
+  environment:
+    CASSANDRA_START_RPC: 'true'
+    CASSANDRA_CLUSTER_NAME: 'snitcher_cluster'
+  volumes:
+    - /data/cassandra:/var/lib/cassandra
