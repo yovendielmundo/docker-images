@@ -1,0 +1,43 @@
+version: '2'
+services:
+  rs3:
+    image: mongo:3.2
+    entrypoint: ['/usr/bin/mongod', '--replSet', 'rs', '--journal', '--smallfiles', '--rest']
+    ports:
+      - 57019:27017
+      - 58019:28017
+    restart: always
+
+  rs2:
+    image: mongo:3.2
+    entrypoint: ['/usr/bin/mongod', '--replSet', 'rs', '--journal', '--smallfiles', '--rest']
+    ports:
+      - 57018:27017
+      - 58018:28017
+    restart: always
+
+  rs1:
+    image: mongo:3.2
+    entrypoint: ['/usr/bin/mongod', '--replSet', 'rs', '--journal', '--smallfiles', '--rest']
+    ports:
+      - 57017:27017
+      - 58017:28017
+    links:
+      - rs2:rs2
+      - rs3:rs3
+    restart: always
+
+  rssetup:
+    image: mongo:3.2
+    links:
+      - rs1:rs1
+      - rs2:rs2
+      - rs3:rs3
+    depends_on:
+      - rs1
+      - rs2
+      - rs3
+    volumes:
+      - ./scripts:/scripts
+    entrypoint: ['/scripts/replicaset-setup.sh']
+

@@ -1,11 +1,20 @@
-db:
-  image: cassandra:3.7
-  container_name: 'cassandra'
-  ports:
-    - 9160:9160
-    - 9042:9042
-  environment:
-    CASSANDRA_START_RPC: 'true'
-    CASSANDRA_CLUSTER_NAME: 'snitcher_cluster'
-  volumes:
-    - /data/cassandra:/var/lib/cassandra
+version: '2'
+services:
+  db:
+    image: cassandra:3.7
+    environment:
+      CASSANDRA_START_RPC: 'true'
+      CASSANDRA_CLUSTER_NAME: 'my_cluster'
+    ports:
+      - 9160:9160
+      - 9042:9042
+
+  db_setup:
+    image: cassandra:3.7
+    links:
+      - db:db
+    depends_on:
+      - db
+    volumes:
+      - ./scripts:/scripts
+    entrypoint: ["/scripts/wait-for-cassandra.sh", "cqlsh", "db", "9042", "-f", "/script/1.sql"]
