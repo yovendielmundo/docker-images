@@ -1,0 +1,60 @@
+version: '2.1'
+services:
+  app:
+    build: .
+    ports:
+      - ${APP_PORT_80_TCP_PORT}:80
+    depends_on:
+      hub:
+        condition: service_started
+    links:
+      - hub:hub
+    volumes:
+      - ./www:/var/www/html
+    command: ["/var/www/html/run.sh"]
+
+  phantonjs:
+    image: selenium/node-phantomjs
+    depends_on:
+      hub:
+        condition: service_healthy
+    links:
+      - hub:hub
+    env_file:
+      - ./.env
+
+  firefox:
+    image: selenium/node-firefox-debug
+    depends_on:
+      hub:
+        condition: service_healthy
+    links:
+      - hub:hub
+    ports:
+      - ${FIREFOX_PORT_5900_TCP_PORT}:5900
+    env_file:
+      - ./.env
+
+  chrome:
+    image: selenium/node-chrome-debug
+    depends_on:
+      hub:
+        condition: service_healthy
+    links:
+      - hub:hub
+    ports:
+      - ${CHROME_PORT_5900_TCP_PORT}:5900
+    env_file:
+      - ./.env
+
+  hub:
+    image: selenium/hub
+    ports:
+      - ${HUB_PORT_4444_TCP_PORT}:${HUB_PORT_4444_TCP_PORT}
+    environment:
+      JAVA_OPTS: "-Xmx512m"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider localhost:4444/grid/console 2>&1 | grep -q '200 OK'"]
+      interval: 5s
+      timeout: 10s
+      retries: 5

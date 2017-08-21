@@ -6,7 +6,6 @@ services:
     ports:
       - 57019:27017
       - 58019:28017
-    restart: always
 
   rs2:
     image: mongo:3.2
@@ -14,7 +13,6 @@ services:
     ports:
       - 57018:27017
       - 58018:28017
-    restart: always
 
   rs1:
     image: mongo:3.2
@@ -25,7 +23,6 @@ services:
     links:
       - rs2:rs2
       - rs3:rs3
-    restart: always
 
   rssetup:
     image: mongo:3.2
